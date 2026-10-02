@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <script src="/js/api.js"></script>
+    <script>proteger()</script>
+    <div class="layout">
+        <script>sidebar('pacientes')</script>
+        <main class="main">
+            <div class="topbar">
+                <h2>Pacientes</h2>
+            </div>
+            <section class="grid two">
+                <div class="card">
+                    <h3>Cadastrar paciente</h3>
+                    <form id="form" class="form"><input name="nome" placeholder="Nome" required><input name="cpf"
+                            placeholder="CPF"><input name="telefone" placeholder="Telefone"><input name="email"
+                            placeholder="E-mail"><input name="endereco" placeholder="Endereço"><input name="nascimento"
+                            type="date"><button class="btn">Salvar</button></form>
+                </div>
+                <div class="card">
+                    <h3>Pacientes cadastrados</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/pacientes.js"></script>
+</body>
+
+</html>

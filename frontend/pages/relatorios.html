@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <script src="/js/api.js"></script>
+    <script>proteger()</script>
+    <div class="layout">
+        <script>sidebar('relatorios')</script>
+        <main class="main">
+            <div class="topbar">
+                <h2>Relatórios</h2><button class="btn light" onclick="window.print()">Exportar PDF</button>
+            </div>
+            <section class="grid two">
+                <div class="card">
+                    <h3>Financeiro mensal</h3><canvas id="graficoFinanceiro"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Indicadores</h3>
+                    <table class="table">
+                        <tbody id="indicadores"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/relatorios.js"></script>
+</body>
+
+</html>

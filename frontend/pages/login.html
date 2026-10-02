@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - PsicoGest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="login-page">
+  <div class="login-card">
+    <div class="brand">
+      <div class="mark">Ψ</div>
+      <div>
+        <h1>PsicoGest</h1><small>Gestão psicológica integrada</small>
+      </div>
+    </div>
+    <div class="tabs"><button id="tabLogin" class="active">Entrar</button><button id="tabRegister">Cadastrar</button>
+    </div>
+    <form id="loginForm" class="form">
+      <input name="email" type="email" placeholder="E-mail" required>
+      <input name="senha" type="password" placeholder="Senha" required>
+      <button class="btn">Entrar</button>
+    </form>
+    <form id="registerForm" class="form hidden">
+      <input name="nome" placeholder="Nome completo" required>
+      <input name="email" type="email" placeholder="E-mail" required>
+      <input name="senha" type="password" placeholder="Senha" required>
+      <select name="perfil">
+        <option value="admin">Administrador</option>
+        <option value="psicologo">Psicólogo</option>
+        <option value="paciente">Paciente</option>
+      </select>
+      <button class="btn">Cadastrar</button>
+    </form>
+  </div>
+  <script>
+    const loginForm = document.getElementById('loginForm'), registerForm = document.getElementById('registerForm');
+    tabLogin.onclick = () => { loginForm.classList.remove('hidden'); registerForm.classList.add('hidden'); tabLogin.classList.add('active'); tabRegister.classList.remove('active') }
+    tabRegister.onclick = () => { registerForm.classList.remove('hidden'); loginForm.classList.add('hidden'); tabRegister.classList.add('active'); tabLogin.classList.remove('active') }
+    loginForm.onsubmit = async e => { e.preventDefault(); const body = Object.fromEntries(new FormData(loginForm)); const r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); const d = await r.json(); if (!r.ok) return alert(d.erro); localStorage.setItem('token', d.token); localStorage.setItem('usuario', JSON.stringify(d.usuario)); location.href = '/pages/dashboard.html' };
+    registerForm.onsubmit = async e => { e.preventDefault(); const body = Object.fromEntries(new FormData(registerForm)); const r = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); const d = await r.json(); if (!r.ok) return alert(d.erro); alert('Cadastro criado. Faça login.'); tabLogin.click() };
+  </script>
+</body>
+
+</html>

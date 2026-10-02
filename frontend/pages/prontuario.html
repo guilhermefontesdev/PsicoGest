@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prontuário</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <script src="/js/api.js"></script>
+    <script>proteger()</script>
+    <div class="layout">
+        <script>sidebar('prontuario')</script>
+        <main class="main">
+            <div class="topbar">
+                <h2>Prontuários</h2>
+            </div>
+            <section class="grid two">
+                <div class="card">
+                    <h3>Nova evolução / anamnese</h3>
+                    <form id="form" class="form"><select name="paciente_id" id="pacienteSelect"
+                            required></select><textarea name="anamnese"
+                            placeholder="Anamnese estruturada"></textarea><textarea name="evolucao"
+                            placeholder="Evolução da sessão"></textarea><select name="status">
+                            <option value="rascunho">Rascunho</option>
+                            <option value="finalizado">Finalizado</option>
+                        </select><button class="btn">Salvar prontuário</button></form>
+                </div>
+                <div class="card">
+                    <h3>Registros</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/prontuario.js"></script>
+</body>
+
+</html>

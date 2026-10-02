@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <script src="/js/api.js"></script>
+    <script>proteger()</script>
+    <div class="layout">
+        <script>sidebar('dashboard')</script>
+        <main class="main">
+            <div class="topbar">
+                <h2>Dashboard</h2><button class="btn" onclick="location.href='/pages/agenda.html'">Nova sessão</button>
+            </div>
+            <section class="grid cards">
+                <div class="card"><small>Pacientes</small><strong id="pacientes">0</strong></div>
+                <div class="card"><small>Sessões</small><strong id="sessoes">0</strong></div>
+                <div class="card"><small>Receita</small><strong id="receita">R$ 0</strong></div>
+                <div class="card"><small>Despesa</small><strong id="despesa">R$ 0</strong></div>
+                <div class="card"><small>Lucro</small><strong id="lucro">R$ 0</strong></div>
+            </section><br>
+            <section class="grid two">
+                <div class="card">
+                    <h3>Receitas x Despesas</h3><canvas id="grafico"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Resumo</h3>
+                    <p>Sistema com autenticação, agenda, pacientes, prontuários, financeiro e relatórios.</p>
+                    <p>Use o menu lateral para navegar.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>

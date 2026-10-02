@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <script src="/js/api.js"></script>
+    <script>proteger()</script>
+    <div class="layout">
+        <script>sidebar('agenda')</script>
+        <main class="main">
+            <div class="topbar">
+                <h2>Agenda</h2>
+            </div>
+            <section class="grid two">
+                <div class="card">
+                    <h3>Agendar sessão</h3>
+                    <form id="form" class="form"><select name="paciente_id" id="pacienteSelect"
+                            required></select><select name="sala_id" id="salaSelect"></select><input name="data_hora"
+                            type="datetime-local" required><select name="status">
+                            <option value="pendente">Pendente</option>
+                            <option value="confirmado">Confirmado</option>
+                            <option value="cancelado">Cancelado</option>
+                            <option value="realizado">Realizado</option>
+                        </select><textarea name="observacao" placeholder="Observação"></textarea><button
+                            class="btn">Agendar</button></form>
+                </div>
+                <div class="card">
+                    <h3>Calendário</h3>
+                    <div id="calendar" class="calendar"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/agenda.js"></script>
+</body>
+
+</html>
