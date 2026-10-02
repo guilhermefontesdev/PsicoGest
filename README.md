@@ -1,74 +1,76 @@
-# Ψ PsicoGest
+# PsicoGest
 
-Sistema web para gestão de clínicas de psicologia: pacientes, agenda de sessões, prontuários, controle financeiro e relatórios, com autenticação por JWT e controle de acesso por perfil.
+Web application for managing psychology clinics: patients, session scheduling, clinical records, finances and reports, with JWT authentication and role-based access control.
 
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase&logoColor=white)
 ![JWT](https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white)
-![Chart.js](https://img.shields.io/badge/Chart.js-gr%C3%A1ficos-FF6384?logo=chartdotjs&logoColor=white)
+![Chart.js](https://img.shields.io/badge/Chart.js-charts-FF6384?logo=chartdotjs&logoColor=white)
+
+> The user interface is in Brazilian Portuguese, and database tables, columns and API routes keep their Portuguese names (e.g. `pacientes` = patients, `agendamentos` = appointments, `prontuarios` = clinical records).
 
 ---
 
-## Funcionalidades
+## Features
 
-| Módulo | O que faz |
+| Module | What it does |
 |---|---|
-| **Autenticação** | Cadastro e login com senha criptografada (bcrypt) e token JWT válido por 8 horas |
-| **Dashboard** | Totais de pacientes e sessões, receita, despesa e lucro, com gráfico mensal de barras |
-| **Pacientes** | Cadastro, listagem e exclusão; atalho direto para o prontuário do paciente |
-| **Agenda** | Calendário do mês com as sessões, escolha de paciente e sala, cancelamento de sessão |
-| **Prontuários** | Registro de anamnese e evolução, com status *rascunho* ou *finalizado* |
-| **Financeiro** | Lançamento de receitas e despesas com forma e status de pagamento |
-| **Relatórios** | Indicadores consolidados e gráfico de linha de receitas × despesas por mês |
+| **Authentication** | Sign-up and login with bcrypt-hashed passwords and a JWT valid for 8 hours |
+| **Dashboard** | Totals for patients and sessions, revenue, expenses and profit, plus a monthly bar chart |
+| **Patients** | Create, list and delete patients; shortcut to each patient's clinical record |
+| **Schedule** | Monthly calendar of sessions, with patient and room selection and session cancellation |
+| **Clinical records** | Intake (anamnesis) and progress notes, with *draft* or *finalized* status |
+| **Finances** | Income and expense entries with payment method and status |
+| **Reports** | Consolidated indicators and a monthly income × expenses line chart |
 
-### Perfis de acesso
+### Roles
 
-O sistema tem três perfis: `admin`, `psicologo` e `paciente`. Todas as rotas da API exigem token, e algumas exigem perfil específico:
+There are three roles: `admin`, `psicologo` (psychologist) and `paciente` (patient). Every API route requires a token, and some also require a specific role:
 
-| Recurso | admin | psicologo | paciente |
+| Resource | admin | psicologo | paciente |
 |---|:---:|:---:|:---:|
-| Pacientes, agenda, planos, documentos, tarefas, salas, relatórios | ✅ | ✅ | ✅ |
-| Prontuários | ✅ | ✅ | ❌ |
-| Financeiro e convênios | ✅ | ❌ | ❌ |
+| Patients, schedule, plans, documents, tasks, rooms, reports | ✅ | ✅ | ✅ |
+| Clinical records | ✅ | ✅ | ❌ |
+| Finances and health insurance plans | ✅ | ❌ | ❌ |
 
 ---
 
-## Tecnologias
+## Tech stack
 
-**Back-end:** Node.js, Express 5, Supabase (PostgreSQL), JSON Web Token, bcryptjs, dotenv, CORS
-**Front-end:** HTML, CSS e JavaScript puro, Chart.js
-**Ferramentas:** nodemon
+**Back end:** Node.js, Express 5, Supabase (PostgreSQL), JSON Web Token, bcryptjs, dotenv, CORS
+**Front end:** HTML, CSS and vanilla JavaScript, Chart.js
+**Tooling:** nodemon
 
 ---
 
-## Arquitetura
+## Architecture
 
 ```
-psicogest/
+PsicoGest/
 ├── backend/
 │   ├── config/
-│   │   └── supabase.js          # Cliente do Supabase
+│   │   └── supabase.js          # Supabase client
 │   ├── middleware/
-│   │   └── authMiddleware.js    # Validação do JWT e checagem de perfil
+│   │   └── authMiddleware.js    # JWT validation and role check
 │   ├── routes/
 │   │   ├── authRoutes.js        # /api/auth (register, login)
-│   │   ├── crudFactory.js       # Gera as rotas CRUD de qualquer tabela
-│   │   └── relatoriosRoutes.js  # /api/relatorios (dashboard, financeiro mensal)
-│   └── server.js                # Ponto de entrada; serve a API e o front-end
+│   │   ├── crudFactory.js       # Generates CRUD routes for any table
+│   │   └── relatoriosRoutes.js  # /api/relatorios (dashboard, monthly finances)
+│   └── server.js                # Entry point; serves the API and the front end
 ├── database/
-│   └── schema.sql               # Criação das tabelas no PostgreSQL
+│   └── schema.sql               # PostgreSQL table definitions
 ├── frontend/
 │   ├── css/style.css
-│   ├── js/                      # Um script por página + api.js (requisições e sidebar)
+│   ├── js/                      # One script per page + api.js (requests and sidebar)
 │   └── pages/                   # login, dashboard, agenda, pacientes, prontuario, financeiro, relatorios
 ├── .env.example
 └── package.json
 ```
 
-### Fábrica de rotas CRUD
+### CRUD route factory
 
-Em vez de escrever um arquivo de rotas por tabela, o `crudFactory(tabela)` gera as cinco operações padrão para qualquer tabela do banco:
+Instead of writing one route file per table, `crudFactory(table)` generates the five standard operations for any table in the database:
 
 ```js
 app.use('/api/pacientes',   authMiddleware, crudFactory('pacientes'));
@@ -76,53 +78,53 @@ app.use('/api/prontuarios', authMiddleware, permitir('admin', 'psicologo'), crud
 app.use('/api/financeiro',  authMiddleware, permitir('admin'), crudFactory('financeiro'));
 ```
 
-A autorização fica na composição de middlewares: `authMiddleware` valida o token e `permitir(...perfis)` libera ou bloqueia o perfil.
+Authorization comes from composing middlewares: `authMiddleware` validates the token, and `permitir(...roles)` allows or blocks each role.
 
 ---
 
-## Modelo de dados
+## Data model
 
 ```mermaid
 erDiagram
-    USUARIOS ||--o{ PACIENTES : "acompanha"
-    USUARIOS ||--o{ AGENDAMENTOS : "atende"
-    USUARIOS ||--o{ PRONTUARIOS : "registra"
-    PACIENTES ||--o{ AGENDAMENTOS : "tem"
-    PACIENTES ||--o{ PRONTUARIOS : "tem"
-    PACIENTES ||--o{ FINANCEIRO : "gera"
-    PACIENTES ||--o{ PLANOS : "contrata"
-    PACIENTES ||--o{ DOCUMENTOS : "possui"
-    PACIENTES ||--o{ TAREFAS : "recebe"
-    SALAS ||--o{ AGENDAMENTOS : "recebe"
-    AGENDAMENTOS ||--o| FINANCEIRO : "origina"
+    USUARIOS ||--o{ PACIENTES : "follows"
+    USUARIOS ||--o{ AGENDAMENTOS : "attends"
+    USUARIOS ||--o{ PRONTUARIOS : "writes"
+    PACIENTES ||--o{ AGENDAMENTOS : "has"
+    PACIENTES ||--o{ PRONTUARIOS : "has"
+    PACIENTES ||--o{ FINANCEIRO : "generates"
+    PACIENTES ||--o{ PLANOS : "subscribes to"
+    PACIENTES ||--o{ DOCUMENTOS : "owns"
+    PACIENTES ||--o{ TAREFAS : "receives"
+    SALAS ||--o{ AGENDAMENTOS : "hosts"
+    AGENDAMENTOS ||--o| FINANCEIRO : "originates"
 ```
 
-Também há a tabela `convenios`, que guarda a divisão percentual entre convênio e paciente. O script completo está em [`database/schema.sql`](database/schema.sql).
+There is also a `convenios` table that stores how the session fee is split between the health insurance plan and the patient. The full script is in [`database/schema.sql`](database/schema.sql).
 
 ---
 
-## Como executar
+## Getting started
 
-### Pré-requisitos
+### Prerequisites
 
-- [Node.js](https://nodejs.org/) 18 ou superior
-- Uma conta e um projeto no [Supabase](https://supabase.com/)
+- [Node.js](https://nodejs.org/) 18 or later
+- A [Supabase](https://supabase.com/) account and project
 
-### 1. Clonar e instalar
+### 1. Clone and install
 
 ```bash
-git clone https://github.com/guilhermefontesdev/psicogest.git
-cd psicogest
+git clone https://github.com/guilhermefontesdev/PsicoGest.git
+cd PsicoGest
 npm install
 ```
 
-### 2. Criar o banco
+### 2. Create the database
 
-No painel do Supabase, abra **SQL Editor**, cole o conteúdo de `database/schema.sql` e execute. O script cria as tabelas e duas salas iniciais.
+In the Supabase dashboard, open **SQL Editor**, paste the contents of `database/schema.sql` and run it. The script creates the tables and two initial rooms.
 
-### 3. Configurar as variáveis de ambiente
+### 3. Set the environment variables
 
-Copie o arquivo de exemplo e preencha com os dados do seu projeto (**Project Settings → API** no Supabase):
+Copy the example file and fill it in with your project's details (**Project Settings → API** in Supabase):
 
 ```bash
 cp .env.example .env
@@ -130,71 +132,71 @@ cp .env.example .env
 
 ```env
 PORT=4234
-SUPABASE_URL=https://seu-projeto.supabase.co
-SUPABASE_ANON_KEY=sua-chave-do-supabase
-JWT_SECRET=uma-frase-longa-e-aleatoria
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-key
+JWT_SECRET=a-long-random-passphrase
 ```
 
-> O arquivo `.env` contém segredos e não deve ser enviado ao GitHub. Ele já está no `.gitignore`.
+> The `.env` file holds secrets and must not be pushed to GitHub. It is already listed in `.gitignore`.
 
-### 4. Rodar
+### 4. Run
 
 ```bash
-npm run dev     # com recarregamento automático (nodemon)
-# ou
+npm run dev     # with auto-reload (nodemon)
+# or
 npm start
 ```
 
-Acesse **http://localhost:4234**. Você será redirecionado para a tela de login, onde pode criar o primeiro usuário na aba **Cadastrar**.
+Open **http://localhost:4234**. You will be redirected to the login page, where you can create the first user in the **Cadastrar** (Sign up) tab.
 
 ---
 
 ## API
 
-Todas as rotas, exceto `/api/auth`, exigem o cabeçalho `Authorization: Bearer <token>`.
+Every route except `/api/auth` requires the `Authorization: Bearer <token>` header.
 
-### Autenticação
+### Authentication
 
-| Método | Rota | Corpo |
+| Method | Route | Body |
 |---|---|---|
-| `POST` | `/api/auth/register` | `{ nome, email, senha, perfil }` |
-| `POST` | `/api/auth/login` | `{ email, senha }` → retorna `{ token, usuario }` |
+| `POST` | `/api/auth/register` | `{ nome, email, senha, perfil }` (name, email, password, role) |
+| `POST` | `/api/auth/login` | `{ email, senha }` → returns `{ token, usuario }` |
 
-### Recursos (CRUD)
+### Resources (CRUD)
 
-Disponíveis para `pacientes`, `agendamentos`, `prontuarios`, `financeiro`, `planos`, `documentos`, `convenios`, `tarefas` e `salas`:
+Available for `pacientes`, `agendamentos`, `prontuarios`, `financeiro`, `planos`, `documentos`, `convenios`, `tarefas` and `salas`:
 
-| Método | Rota | Ação |
+| Method | Route | Action |
 |---|---|---|
-| `GET` | `/api/{recurso}` | Lista os registros |
-| `GET` | `/api/{recurso}/:id` | Busca um registro |
-| `POST` | `/api/{recurso}` | Cria um registro |
-| `PUT` | `/api/{recurso}/:id` | Atualiza um registro |
-| `DELETE` | `/api/{recurso}/:id` | Remove um registro |
+| `GET` | `/api/{resource}` | List records |
+| `GET` | `/api/{resource}/:id` | Get one record |
+| `POST` | `/api/{resource}` | Create a record |
+| `PUT` | `/api/{resource}/:id` | Update a record |
+| `DELETE` | `/api/{resource}/:id` | Delete a record |
 
-### Relatórios
+### Reports
 
-| Método | Rota | Retorno |
+| Method | Route | Returns |
 |---|---|---|
-| `GET` | `/api/relatorios/dashboard` | `{ pacientes, sessoes, receita, despesa, lucro, prontuarios }` |
-| `GET` | `/api/relatorios/financeiro-mensal` | Receita e despesa de cada um dos 12 meses |
+| `GET` | `/api/relatorios/dashboard` | `{ pacientes, sessoes, receita, despesa, lucro, prontuarios }` (patients, sessions, revenue, expenses, profit, records) |
+| `GET` | `/api/relatorios/financeiro-mensal` | Revenue and expenses for each of the 12 months |
 
 ---
 
-## Próximos passos
+## Roadmap
 
-- [ ] Telas para planos, documentos (upload de arquivos), convênios e tarefas, que já têm rotas na API
-- [ ] Filtrar pacientes, agenda e prontuários pelo psicólogo logado
-- [ ] Edição de pacientes e prontuários pela interface
-- [ ] Validação dos dados recebidos antes de gravar no banco
-- [ ] Ativar Row Level Security no Supabase e usar a chave de serviço apenas no servidor
-- [ ] Testes automatizados da API
+- [ ] Screens for plans, documents (file upload), health insurance plans and tasks, which already have API routes
+- [ ] Filter patients, schedule and clinical records by the logged-in psychologist
+- [ ] Edit patients and clinical records from the UI
+- [ ] Validate incoming data before writing to the database
+- [ ] Enable Row Level Security in Supabase and use the service key on the server only
+- [ ] Automated API tests
 
 ---
 
-## Autor
+## Author
 
 **Guilherme Viana Fontes**
-Estudante de Engenharia de Software na UCSal · Desenvolvedor back-end em formação
+Software Engineering student at UCSal · Aspiring back-end developer
 
 [![GitHub](https://img.shields.io/badge/GitHub-guilhermefontesdev-181717?logo=github)](https://github.com/guilhermefontesdev)
